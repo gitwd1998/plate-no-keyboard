@@ -1,6 +1,6 @@
 {
   "name": "plate-no-keyboard",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": false,
   "description": "基于vue3的车牌号键盘",
   "main": "dist/index.umd.min.js",

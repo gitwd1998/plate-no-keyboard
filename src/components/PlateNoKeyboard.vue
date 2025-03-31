@@ -58,15 +58,17 @@ const keyboard = computed(() => {
 
 function onPrint (value) {
   if (modelValue.value.length >= props.maxlength) return
-  modelValue.value += value
+  const newValue = modelValue.value + value
+  modelValue.value = newValue
   emits('print', value)
-  emits('change', modelValue.value)
+  emits('change', newValue)
 }
 function onDelete () {
   if (!modelValue.value.length) return
-  modelValue.value = modelValue.value.slice(0, -1)
+  const newValue = modelValue.value.slice(0, -1)
+  modelValue.value = newValue
   emits('delete')
-  emits('change', modelValue.value)
+  emits('change', newValue)
 }
 function listenerTouchstart (e) {
   if (plateNoKeyboardRef.value?.contains(e.target)) return
