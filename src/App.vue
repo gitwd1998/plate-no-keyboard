@@ -1,12 +1,15 @@
 <template>
-  <input class="text-input" type="text" readonly v-model="value" @click="$refs.PlateNoKeyboardRef.open()">
+  <!-- 系统键盘输入 -->
+  <input class="text-input" type="text" v-model="value">
+  <!-- 插件键盘输入 -->
+  <input class="text-input" type="text" readonly v-model="value" @click="visible = !visible">
 
   <plate-no-keyboard
-    ref="PlateNoKeyboardRef"
     v-model="value"
-    @change="onChange"
-    @delete="onDelete"
+    v-model:visible="visible"
+    @update:modelValue="onChange"
     @print="onPrint"
+    @delete="onDelete"
     @open="onOpen"
     @opened="onOpened"
     @close="onClose"
@@ -19,6 +22,7 @@ export default {
   name: 'App',
   data () {
     return {
+      visible: false,
       value: ''
     }
   },
@@ -26,11 +30,11 @@ export default {
     onChange (v) {
       console.log('onChange', v)
     },
-    onDelete (v) {
-      console.log('onDelete', v)
-    },
     onPrint (v) {
       console.log('onPrint', v)
+    },
+    onDelete (v) {
+      console.log('onDelete', v)
     },
     onOpen (v) {
       console.log('onOpen', v)

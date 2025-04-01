@@ -18,36 +18,37 @@
 </template>
 
 <script setup>
-import { ref, defineExpose, defineProps, defineEmits, computed, nextTick } from 'vue'
+import { ref, defineProps, defineEmits, computed, nextTick } from 'vue'
 
-const emits = defineEmits(['update:modelValue', 'change', 'print', 'delete', 'open', 'opened', 'close', 'closed'])
+const emits = defineEmits([
+  'update:modelValue',
+  'update:visible',
+  'print',
+  'delete',
+  'open',
+  'opened',
+  'close',
+  'closed'
+])
 
 const props = defineProps({
-  maxlength: {
-    type: [Number, String],
-    default: 8
+  visible: {
+    type: Boolean,
+    default: false
   },
   modelValue: {
     type: String,
     default: ''
   },
-  firstExtend: {
-    type: Array,
-    default: () => []
-  },
-  otherExtend: {
-    type: Array,
-    default: () => []
+  maxlength: {
+    type: [Number, String],
+    default: 8
   }
 })
 
-const printValue = ref(props.modelValue)
-
+const printValue = ref('')
 const plateNoKeyboardRef = ref(null)
-
-const visible = ref(false)
-
-const toggle = ref(Boolean(props.modelValue))
+const toggle = ref(false)
 
 const keyboard = computed(() => {
   return toggle.value
@@ -71,7 +72,6 @@ function onPrint (value) {
   toggle.value = Boolean(printValue.value)
   emits('print', value)
   emits('update:modelValue', printValue.value)
-  emits('change', printValue.value)
 }
 function onDelete () {
   if (!printValue.value.length) return
@@ -79,31 +79,18 @@ function onDelete () {
   toggle.value = Boolean(printValue.value)
   emits('delete')
   emits('update:modelValue', printValue.value)
-  emits('change', printValue.value)
 }
 function listenerTouchstart (e) {
   if (plateNoKeyboardRef.value?.contains(e.target)) return
-  onClose()
+  emits('update:visible', false)
 }
-function onOpen () {
-  if (visible.value) return
-  visible.value = true
+
+function onBeforeEnter () {
+  printValue.value = props.modelValue
+  toggle.value = Boolean(props.modelValue)
   nextTick(() => {
     window.addEventListener('touchstart', listenerTouchstart)
   })
-}
-function onClose () {
-  if (!visible.value) return
-  visible.value = false
-  window.removeEventListener('touchstart', listenerTouchstart)
-}
-
-defineExpose({
-  open: onOpen,
-  close: onClose
-})
-
-function onBeforeEnter () {
   emits('open')
 }
 function onAfterEnter () {
@@ -111,6 +98,7 @@ function onAfterEnter () {
   emits('opened', height)
 }
 function onBeforeLeave () {
+  window.removeEventListener('touchstart', listenerTouchstart)
   emits('close')
 }
 function onAfterLeave () {
